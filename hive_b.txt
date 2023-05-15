@@ -1,0 +1,688 @@
+hduser@student-ThinkCentre-M700:~$ start-dfs.sh
+23/05/10 13:18:17 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Starting namenodes on [localhost]
+localhost: starting namenode, logging to /usr/local/hadoop/logs/hadoop-hduser-namenode-student-ThinkCentre-M700.out
+localhost: starting datanode, logging to /usr/local/hadoop/logs/hadoop-hduser-datanode-student-ThinkCentre-M700.out
+Starting secondary namenodes [0.0.0.0]
+0.0.0.0: starting secondarynamenode, logging to /usr/local/hadoop/logs/hadoop-hduser-secondarynamenode-student-ThinkCentre-M700.out
+23/05/10 13:18:37 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+hduser@student-ThinkCentre-M700:~$ start-yarn.sh
+starting yarn daemons
+starting resourcemanager, logging to /usr/local/hadoop/logs/yarn-hduser-resourcemanager-student-ThinkCentre-M700.out
+localhost: starting nodemanager, logging to /usr/local/hadoop/logs/yarn-hduser-nodemanager-student-ThinkCentre-M700.out
+hduser@student-ThinkCentre-M700:~$ jps
+8288 NodeManager
+8034 ResourceManager
+7286 SecondaryNameNode
+7082 DataNode
+8638 Jps
+6863 NameNode
+hduser@student-ThinkCentre-M700:~$ cd /usr/local/hive/bin
+hduser@student-ThinkCentre-M700:/usr/local/hive/bin$ ./hive
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/hive/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+
+Logging initialized using configuration in jar:file:/usr/local/hive/lib/hive-common-2.3.0.jar!/hive-log4j2.properties Async: true
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+hive> use gaurav;
+OK
+Time taken: 4.646 seconds
+hive> show tables;
+OK
+gaurav__flight3_arr_del_idx__
+employee
+fli_det
+flight2
+flight3
+flight_det
+Time taken: 0.214 seconds, Fetched: 6 row(s)
+hive> desc flight3
+    > ;
+OK
+year                	int                 	                    
+month               	int                 	                    
+day                 	int                 	                    
+day_of_week         	int                 	                    
+dep_time            	int                 	                    
+crs_dep_time        	int                 	                    
+arr_time            	int                 	                    
+crs_arr_time        	int                 	                    
+unique_carrier      	string              	                    
+flight_num          	int                 	                    
+tail_num            	string              	                    
+actual_elapsed_time 	int                 	                    
+crs_elapsed_time    	int                 	                    
+air_time            	int                 	                    
+arr_delay           	int                 	                    
+dep_delay           	int                 	                    
+origin              	string              	                    
+dest                	string              	                    
+distance            	int                 	                    
+taxi_in             	int                 	                    
+taxi_out            	int                 	                    
+cancelled           	int                 	                    
+cancellation_code   	string              	                    
+diverted            	int                 	                    
+carrier_delay       	string              	                    
+weather_delay       	string              	                    
+nas_delay           	string              	                    
+security_delay      	string              	                    
+late_aircraft_delay 	string              	                    
+Time taken: 0.935 seconds, Fetched: 29 row(s)
+hive> CREATE INDEX inedx_salary ON TABLE employee(salary)
+    > AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler';
+FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask. java.lang.RuntimeException: Please specify deferred rebuild using " WITH DEFERRED REBUILD ".
+hive> CREATE INDEX idx_fli_num ON TABLE flight3(flight_num) AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler' with deffered rebuild;
+MismatchedTokenException(24!=85)
+	at org.antlr.runtime.BaseRecognizer.recoverFromMismatchedToken(BaseRecognizer.java:617)
+	at org.antlr.runtime.BaseRecognizer.match(BaseRecognizer.java:115)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.autoRebuild(HiveParser.java:7156)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.createIndexStatement(HiveParser.java:6779)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:3990)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:2382)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1333)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1316)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1456)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1236)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1226)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:239)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:153)
+FAILED: ParseException line 1:124 mismatched input 'deffered' expecting KW_DEFERRED near 'with' in auto rebuild index
+hive> CREATE INDEX idx_fli_num ON TABLE flight3(flight_num) AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler' with kw_deffered rebuild; 
+MismatchedTokenException(24!=85)
+	at org.antlr.runtime.BaseRecognizer.recoverFromMismatchedToken(BaseRecognizer.java:617)
+	at org.antlr.runtime.BaseRecognizer.match(BaseRecognizer.java:115)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.autoRebuild(HiveParser.java:7156)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.createIndexStatement(HiveParser.java:6779)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:3990)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:2382)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1333)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1316)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1456)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1236)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1226)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:239)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:153)
+FAILED: ParseException line 1:124 mismatched input 'kw_deffered' expecting KW_DEFERRED near 'with' in auto rebuild index
+hive> CREATE INDEX idx_fli_num ON TABLE flight3(flight_num) AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler' with KW_DEFERRED REBUILD; 
+MismatchedTokenException(24!=85)
+	at org.antlr.runtime.BaseRecognizer.recoverFromMismatchedToken(BaseRecognizer.java:617)
+	at org.antlr.runtime.BaseRecognizer.match(BaseRecognizer.java:115)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.autoRebuild(HiveParser.java:7156)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.createIndexStatement(HiveParser.java:6779)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.ddlStatement(HiveParser.java:3990)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.execStatement(HiveParser.java:2382)
+	at org.apache.hadoop.hive.ql.parse.HiveParser.statement(HiveParser.java:1333)
+	at org.apache.hadoop.hive.ql.parse.ParseDriver.parse(ParseDriver.java:204)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:77)
+	at org.apache.hadoop.hive.ql.parse.ParseUtils.parse(ParseUtils.java:70)
+	at org.apache.hadoop.hive.ql.Driver.compile(Driver.java:468)
+	at org.apache.hadoop.hive.ql.Driver.compileInternal(Driver.java:1316)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1456)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1236)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1226)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:233)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:184)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:403)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:821)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:759)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:686)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.apache.hadoop.util.RunJar.run(RunJar.java:239)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:153)
+FAILED: ParseException line 1:124 mismatched input 'KW_DEFERRED' expecting KW_DEFERRED near 'with' in auto rebuild index
+hive> CREATE INDEX idx_fli_num ON TABLE flight3(flight_num) AS 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler' with DEFERRED REBUILD;
+OK
+Time taken: 1.025 seconds
+hive> select avg(arr_delay) from flight3;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20230510133533_9ddbafc7-857b-41c0-8b42-0042e3554d41
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Job running in-process (local Hadoop)
+2023-05-10 13:35:38,173 Stage-1 map = 0%,  reduce = 0%
+2023-05-10 13:35:39,183 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_local16676928_0001
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 50227800 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 0 msec
+OK
+11.48053997406133
+Time taken: 5.771 seconds, Fetched: 1 row(s)
+hive> select avg(dep_delay) from flight3;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20230510133601_a783e530-1c88-4991-8f06-c6bf0650511c
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Job running in-process (local Hadoop)
+2023-05-10 13:36:03,119 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_local1365660967_0002
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 100455600 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 0 msec
+OK
+13.104479405790656
+Time taken: 1.811 seconds, Fetched: 1 row(s)
+hive> select origin, count(*) from flight3 group by origin;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20230510133755_2ce923f2-530a-4eec-90f3-61ae5c3a09c2
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Job running in-process (local Hadoop)
+2023-05-10 13:37:56,935 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_local1608014692_0003
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 150683400 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 0 msec
+OK
+NULL	1
+ABE	248
+ABQ	2629
+ACV	301
+ACY	1
+AEX	27
+ALB	755
+AMA	375
+ANC	2
+ASE	736
+ATL	1553
+ATW	275
+AUS	2171
+AVL	68
+AVP	77
+AZO	86
+BDL	1190
+BFL	403
+BGR	118
+BHM	1377
+BIL	291
+BIS	95
+BLI	30
+BMI	118
+BNA	3164
+BOI	1263
+BOS	1795
+BPT	39
+BRO	106
+BTM	62
+BTR	183
+BTV	330
+BUF	847
+BUR	2102
+BWI	5646
+BZN	375
+CAE	354
+CAK	94
+CDC	48
+CEC	88
+CHA	84
+CHS	555
+CIC	114
+CID	271
+CLD	229
+CLE	3059
+CLL	31
+CLT	2922
+CMH	1560
+COD	93
+COS	1226
+CPR	270
+CRP	153
+CRW	146
+CVG	5740
+CWA	93
+DAB	8
+DAL	3889
+DAY	427
+DCA	1142
+DEN	13195
+DFW	787
+DRO	318
+DSM	540
+DTW	1401
+EGE	197
+EKO	149
+ELP	1267
+EUG	552
+EWR	5488
+FAR	233
+FAT	1016
+FCA	210
+FLG	148
+FLL	1383
+FSD	308
+FWA	144
+GEG	1017
+GJT	372
+GPT	157
+GRB	184
+GRK	57
+GRR	462
+GSO	601
+GSP	534
+GTF	155
+GUC	62
+HDN	258
+HLN	104
+HNL	1044
+HOU	3842
+HPN	99
+HRL	375
+HSV	297
+IAD	5003
+IAH	7188
+ICT	527
+IDA	270
+ILM	48
+IND	891
+IPL	117
+ISP	801
+ITO	174
+IYK	82
+JAC	194
+JAN	445
+JAX	1397
+JFK	1993
+KOA	324
+LAN	187
+LAS	8591
+LAX	10922
+LBB	418
+LCH	96
+LEX	407
+LFT	244
+LGA	1883
+LGB	452
+LIH	270
+LIT	497
+LNK	212
+LRD	50
+LWS	52
+MAF	388
+MBS	120
+MCI	3610
+MCO	4013
+MDT	292
+MDW	6408
+MEM	710
+MFE	58
+MFR	474
+MGM	31
+MHT	1297
+MIA	167
+MKE	1593
+MLB	1
+MLI	140
+MLU	59
+MOB	130
+MOD	259
+MRY	611
+MSN	453
+MSO	273
+MSP	1034
+MSY	1684
+MTJ	225
+MYR	94
+OAK	4441
+OGG	371
+OKC	1430
+OMA	1300
+ONT	2719
+ORD	13935
+ORF	893
+OXR	113
+PBI	533
+PDX	2648
+PHL	2713
+PHX	9417
+PIA	176
+PIH	154
+PIT	1699
+PMD	57
+PNS	125
+PSC	231
+PSP	753
+PVD	1351
+PWM	254
+RAP	242
+RDD	152
+RDM	297
+RDU	2107
+RFD	58
+RIC	600
+RNO	1819
+ROA	104
+ROC	458
+RSW	389
+SAN	4588
+SAT	2305
+SAV	526
+SBA	861
+SBN	196
+SBP	420
+SDF	1023
+SEA	2586
+SFO	8001
+SGF	292
+SGU	308
+SHV	90
+SJC	2940
+SJU	108
+SLC	8832
+SLE	54
+SMF	3566
+SMX	149
+SNA	1670
+SPI	150
+SRQ	95
+STL	2632
+STT	29
+SUN	222
+SYR	434
+TEX	54
+TLH	59
+TPA	2708
+TRI	28
+TUL	1123
+TUS	1841
+TVC	90
+TWF	249
+TYS	387
+VPS	79
+XNA	353
+YKM	33
+YUM	380
+Time taken: 1.799 seconds, Fetched: 217 row(s)
+hive> select dest, count(*) from flight3 group by dest;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hduser_20230510133842_e351b4d3-99e9-4dc0-9bce-8bb4bf0cf610
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Job running in-process (local Hadoop)
+2023-05-10 13:38:44,164 Stage-1 map = 100%,  reduce = 100%
+Ended Job = job_local155725701_0004
+MapReduce Jobs Launched: 
+Stage-Stage-1:  HDFS Read: 200911200 HDFS Write: 0 SUCCESS
+Total MapReduce CPU Time Spent: 0 msec
+OK
+NULL	1
+ABE	251
+ABQ	2673
+ACV	299
+AEX	28
+ALB	762
+AMA	376
+ANC	2
+ASE	711
+ATL	1579
+ATW	276
+AUS	2195
+AVL	68
+AVP	77
+AZO	86
+BDL	1198
+BFL	402
+BGR	118
+BHM	1391
+BIL	293
+BIS	95
+BLI	31
+BMI	118
+BNA	3217
+BOI	1275
+BOS	1791
+BPT	39
+BRO	107
+BTM	62
+BTR	183
+BTV	330
+BUF	854
+BUR	2162
+BWI	5757
+BZN	370
+CAE	354
+CAK	94
+CDC	49
+CEC	89
+CHA	83
+CHS	555
+CIC	114
+CID	272
+CLD	229
+CLE	3066
+CLL	31
+CLT	2867
+CMH	1579
+COD	93
+COS	1229
+CPR	270
+CRP	153
+CRW	146
+CVG	5712
+CWA	93
+DAB	8
+DAL	3958
+DAY	427
+DCA	1132
+DEN	13245
+DFW	786
+DRO	317
+DSM	540
+DTW	1418
+EGE	197
+EKO	148
+ELP	1285
+EUG	554
+EWR	5487
+FAR	233
+FAT	1024
+FCA	210
+FLG	148
+FLL	1418
+FSD	305
+FWA	144
+GEG	1027
+GJT	390
+GPT	158
+GRB	187
+GRK	58
+GRR	464
+GSO	602
+GSP	535
+GTF	154
+GUC	64
+HDN	251
+HLN	106
+HNL	1044
+HOU	3915
+HPN	96
+HRL	378
+HSV	297
+IAD	5015
+IAH	7187
+ICT	527
+IDA	279
+ILM	47
+IND	887
+IPL	116
+ISP	790
+ITO	174
+IYK	82
+JAC	193
+JAN	439
+JAX	1387
+JFK	1997
+KOA	324
+LAN	187
+LAS	8505
+LAX	10916
+LBB	406
+LCH	97
+LEX	408
+LFT	245
+LGA	1884
+LGB	453
+LIH	270
+LIT	489
+LNK	212
+LRD	51
+LWS	52
+MAF	378
+MBS	119
+MCI	3596
+MCO	3957
+MDT	294
+MDW	6330
+MEM	712
+MFE	56
+MFR	471
+MGM	31
+MHT	1286
+MIA	168
+MKE	1582
+MLB	1
+MLI	141
+MLU	59
+MOB	130
+MOD	260
+MRY	615
+MSN	451
+MSO	275
+MSP	1037
+MSY	1659
+MTJ	227
+MYR	95
+OAK	4408
+OGD	1
+OGG	371
+OKC	1420
+OMA	1302
+ONT	2723
+ORD	13945
+ORF	889
+OXR	113
+PBI	525
+PDX	2640
+PHL	2665
+PHX	9351
+PIA	178
+PIH	161
+PIT	1724
+PMD	58
+PNS	124
+PSC	231
+PSP	751
+PVD	1342
+PWM	253
+RAP	242
+RDD	154
+RDM	299
+RDU	2102
+RFD	60
+RIC	607
+RNO	1816
+ROA	104
+ROC	459
+RSW	398
+SAN	4587
+SAT	2271
+SAV	526
+SBA	863
+SBN	197
+SBP	420
+SDF	1017
+SEA	2580
+SFO	8000
+SGF	291
+SGU	309
+SHV	91
+SJC	2934
+SJU	115
+SLC	8779
+SLE	53
+SMF	3552
+SMX	149
+SNA	1676
+SPI	151
+SRQ	94
+STL	2604
+STT	32
+SUN	217
+SYR	438
+TEX	54
+TLH	59
+TPA	2687
+TRI	29
+TUL	1114
+TUS	1843
+TVC	90
+TWF	267
+TYS	385
+VPS	79
+XNA	354
+YKM	32
+YUM	381
+Time taken: 1.792 seconds, Fetched: 217 row(s)
+
